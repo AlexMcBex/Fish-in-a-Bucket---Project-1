@@ -18,15 +18,16 @@ And another thing: when you are fishing the captain is watching and if you miss 
 Good luck!
 
 ## Technologies Used
--HTML5
--CSS
--JavaScript
--Canvas
--Digital Art Program
+1. HTML5
+2. CSS
+3. JavaScript
+4. Canvas
+5. Digital Art Program
 
 ## User Stories
 - As a user, I want to keep my high score
 - As a user, I want to share my result on my social media
 - As a user, I want a hi-score mode
 
-##Wireframes and screenshots
+## Wireframes and screenshots
+
