@@ -30,4 +30,5 @@ Good luck!
 - As a user, I want a hi-score mode
 
 ## Wireframes and screenshots
+![home-screen](img/home.jpg)
 
