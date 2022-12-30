@@ -1,0 +1,45 @@
+body {
+    background: black;
+    height: 100%;
+}
+#container {
+    display: grid;
+    background: green;
+    grid-template-columns: 0.2fr 0.6fr  0.2fr;
+    grid-template-rows: 0.5fr 0.5fr;
+    grid-template-areas: "top-left river top-right" 
+    "btm-left river btm-right" ;
+    row-gap: 4em;
+    column-gap: 1em;
+    padding: .5em;
+    min-width: 50%;
+    position: absolute;
+    height: 100%;
+}
+main {
+    grid-area: river;
+}
+#top-left {
+    grid-area: top-left;
+}
+#top-right {
+    grid-area: top-right;
+}
+#btm-left {
+    grid-template-columns: btm-left;
+}
+#btm-right {
+    grid-area: btm-right;
+}
+#top-left, #top-right, #btm-left, #btm-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: yellow;
+    border-radius: 5px;
+  }
+  canvas {
+    background-color: lightskyblue;
+    width: 100%;
+    height: 100%;
+  }
