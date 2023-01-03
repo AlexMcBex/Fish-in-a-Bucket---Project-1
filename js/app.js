@@ -30,7 +30,9 @@
 // canvas
 const game = document.getElementById("river")
 // score
+let scoreFish = 0
 const score = document.getElementById("score")
+score.innerHTML = scoreFish
 // lost fish
 const lostFish = document.getElementById("lost-score")
 
@@ -38,8 +40,33 @@ const ctx = game.getContext("2d")
 
 game.setAttribute('width', getComputedStyle(game)['width'])
 game.setAttribute('height', getComputedStyle(game)['height'])
-// game.width = 800
+game.width = 600
+// game.height = 800
 
+class Fish {
+    constructor(height, width, x, y, color, safe, points,) {
+        this.height = height
+        this.width = width
+        this.x = x
+        this.y = y
+        this.color = color
+        this.safe = safe
+        this.points = points
+        this.isVisible = true
+        this.speed = 15
+        this.render = function () {
+            ctx.fillStyle = this.color
+            ctx.fillRect(this.x, this.y, this.width, this.height)
+        }
+        this.fishMovement = function () {
+            this.y += this.speed
+            if (this.y >= game.height) {
+                this.y = game.height + 1
+                // this.fishMovement()
+            }
+        }
+    }
+}
 
 // const player = new Bucket(265, 800, 70, 90, 'brown')
 //bucket
@@ -93,23 +120,47 @@ const player = {
 // ctx.fill();
     }
 }
-    
 
+// const randomSpawn = () =>{
+//     return (Math.floor(Math.random() * (game.width-this.width)))
+// }
+// //needs to be in a function that creates consts
+const newFish = () => {
 
+}
+const goodFish = new Fish(50, 20, 300, -60, "yellow", true, 5,)
+// console.log(goodFish.y)
 
-
+const detectCatch = (thing) => {
+    if (player.x < thing.x + thing.width
+        && player.x + player.width > thing.x
+        && player.y < thing.y + thing.height
+        && player.y + player.height > thing.y) {
+            console.log('got a fish!')
+            scoreFish += thing.points
+            thing.isVisible = false
+        }
+}
 
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
 
     player.render()
     player.movePlayer()
-    // movement.textContent = `${player.x}, ${player.y}`
+if (goodFish.isVisible){
+    goodFish.render()
+    goodFish.fishMovement()
+    detectCatch(goodFish)
+} else {
+    goodFish.y = -90
+    goodFish.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
+    goodFish.isVisible = true
+}
+
+score.innerHTML = scoreFish
 }
 
 
-
-// keydown will set a player's direction
 document.addEventListener('keydown', (e) => {
     player.setDirection(e.key)
 })
