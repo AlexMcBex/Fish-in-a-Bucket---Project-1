@@ -34,7 +34,9 @@ let scoreFish = 0
 const score = document.getElementById("score")
 score.innerHTML = scoreFish
 // lost fish
+let missedFish = 0
 const lostFish = document.getElementById("lost-score")
+lostFish.innerHTML = `${missedFish} /20`
 
 const ctx = game.getContext("2d")
 
@@ -141,6 +143,13 @@ const detectCatch = (thing) => {
             thing.isVisible = false
         }
 }
+// if you don't catch the fish it goes miss
+const missFish = (e) =>{
+    if (e.y + e.height >= game.height) {
+        e.isVisible = false
+        missedFish += e.points
+    }
+}
 
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
@@ -151,6 +160,7 @@ if (goodFish.isVisible){
     goodFish.render()
     goodFish.fishMovement()
     detectCatch(goodFish)
+    missFish(goodFish)
 } else {
     goodFish.y = -90
     goodFish.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
@@ -158,6 +168,7 @@ if (goodFish.isVisible){
 }
 
 score.innerHTML = scoreFish
+lostFish.innerHTML = `${missedFish} /20`
 }
 
 
