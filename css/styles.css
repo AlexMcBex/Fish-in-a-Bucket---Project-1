@@ -9,10 +9,10 @@ body {
     grid-template-rows: 0.5fr 0.5fr;
     grid-template-areas: "top-left river top-right" 
     "btm-left river btm-right" ;
-    row-gap: 4em;
-    column-gap: 1em;
-    padding: .5em;
-    min-width: 50%;
+    row-gap: 7em;
+    column-gap: 3em;
+    padding: 0 .5em;
+    min-width: 100px;
     position: absolute;
     height: 100%;
 }
@@ -37,9 +37,12 @@ main {
     align-items: center;
     background-color: yellow;
     border-radius: 5px;
+    width: 100px;
+    height: 300px;
+    /* margin: 6px; */
   }
   canvas {
     background-color: lightskyblue;
-    width: 100%;
+    width: 600px;
     height: 100%;
   }
