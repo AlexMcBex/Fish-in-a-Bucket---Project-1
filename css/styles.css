@@ -1,6 +1,7 @@
 body {
     background: black;
     height: 100%;
+    align-content: center;
 }
 #container {
     display: grid;
@@ -11,7 +12,7 @@ body {
     "btm-left river btm-right" ;
     row-gap: 7em;
     column-gap: 3em;
-    padding: 0 .5em;
+    /* padding: 0 .5em; */
     min-width: 100px;
     position: absolute;
     height: 100%;
@@ -20,12 +21,14 @@ main {
     grid-area: river;
 }
 #top-left {
+    /* margin-left: 5em; */
     grid-area: top-left;
 }
 #top-right {
     grid-area: top-right;
 }
 #btm-left {
+    /* margin-left: 5em; */
     grid-template-columns: btm-left;
 }
 #btm-right {
@@ -36,13 +39,14 @@ main {
     justify-content: center;
     align-items: center;
     background-color: yellow;
-    border-radius: 5px;
-    width: 100px;
+    border-radius: 300px;
+    width: 300px;
     height: 300px;
-    /* margin: 6px; */
+    margin: 6px;
   }
   canvas {
     background-color: lightskyblue;
     width: 600px;
     height: 100%;
+    margin: 0;
   }

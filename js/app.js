@@ -27,16 +27,22 @@
 ////////////////
 
 //////HTML Elements ///////
+//game start
+let gameOn = false
 // canvas
 const game = document.getElementById("river")
 // score
 let scoreFish = 0
+const topRight = document.getElementById("top-right")
 const score = document.getElementById("score")
 score.innerHTML = scoreFish
 // lost fish
 let missedFish = 0
 const lostFish = document.getElementById("lost-score")
-lostFish.innerHTML = `${missedFish} /20`
+lostFish.innerHTML = `${missedFish} /50`
+
+
+
 
 const ctx = game.getContext("2d")
 
@@ -64,7 +70,13 @@ class Fish {
             this.y += this.speed
             if (this.y >= game.height) {
                 this.y = game.height + 1
+                this.isVisible = false
                 // this.fishMovement()
+            }
+            if (!this.isVisible){
+                this.y = -90
+                this.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
+                this.isVisible = true
             }
         }
     }
@@ -74,7 +86,7 @@ class Fish {
 //bucket
 const player = {
     x : 265,
-    y : 800,
+    y : 810,
     width : 70,
     height : 90,
     color : "brown",
@@ -85,12 +97,12 @@ const player = {
         right: false
     },
     setDirection : function (key) {
-        console.log('this is the key in setDirection', key)
+        // console.log('this is the key in setDirection', key)
         if (key.toLowerCase() == 'a') { this.direction.left = true }
         if (key.toLowerCase() == 'd') { this.direction.right = true }
     },
     unsetDirection: function (key) {
-        console.log('this is the key in unsetDirection', key)
+        // console.log('this is the key in unsetDirection', key)
         if (key.toLowerCase() == 'a') { this.direction.left = false }
         if (key.toLowerCase() == 'd') { this.direction.right = false }
     },
@@ -127,51 +139,62 @@ const player = {
 //     return (Math.floor(Math.random() * (game.width-this.width)))
 // }
 // //needs to be in a function that creates consts
-const newFish = () => {
+// const newFish = () => {
 
-}
+// }
 const goodFish = new Fish(50, 20, 300, -60, "yellow", true, 5,)
+const bombFish = new Fish(45, 45, 200, -60, "black", false, 0)
 // console.log(goodFish.y)
 
 const detectCatch = (thing) => {
-    if (player.x < thing.x + thing.width
-        && player.x + player.width > thing.x
-        && player.y < thing.y + thing.height
-        && player.y + player.height > thing.y) {
+    if (
+        player.x + 2 < thing.x + thing.width
+        && player.x + player.width - 2 > thing.x
+        && (player.y === thing.y + thing.height
+        || player.y +5 === thing.y + thing.height)
+        ) {
+            if (thing.safe){
             console.log('got a fish!')
             scoreFish += thing.points
             thing.isVisible = false
+        }else{
+            thing.isVisible = false
+            console.log("BOOM")
         }
-}
+        } 
+    }
 // if you don't catch the fish it goes miss
 const missFish = (e) =>{
-    if (e.y + e.height >= game.height) {
+    if (e.y + e.height >= game.height 
+        && e.isVisible) {
         e.isVisible = false
         missedFish += e.points
+        if(e.safe)
+        console.log(`you missed ${missedFish} pounds of good Fish!`)
+    } else if (!e.isVisible){
+        e.y = -90
+        e.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
+        e.isVisible = true
     }
 }
 
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
-
-    player.render()
-    player.movePlayer()
-if (goodFish.isVisible){
-    goodFish.render()
-    goodFish.fishMovement()
-    detectCatch(goodFish)
-    missFish(goodFish)
-} else {
-    goodFish.y = -90
-    goodFish.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
-    goodFish.isVisible = true
-}
-
+if (gameOn){
+goodFish.render()
+goodFish.fishMovement()
+detectCatch(goodFish)
+missFish(goodFish)
+bombFish.render()
+bombFish.fishMovement()
+detectCatch(bombFish)
+missFish(bombFish)
+player.render()
+player.movePlayer()
 score.innerHTML = scoreFish
-lostFish.innerHTML = `${missedFish} /20`
+lostFish.innerHTML = `${missedFish} /100`}
 }
-
-
+//Events for key pressing and releasing
 document.addEventListener('keydown', (e) => {
     player.setDirection(e.key)
 })
@@ -180,11 +203,53 @@ document.addEventListener('keyup', (e) => {
         player.unsetDirection(e.key)
     }
 })
-
 const gameInterval = setInterval(gameLoop, 60)
-
 const stopGameLoop = () => { clearInterval(gameInterval) }
 
-document.addEventListener('DOMContentLoaded', function () {
-    gameInterval
+
+
+
+// if (gameOn) {
+// document.addEventListener('keydown', (event) => {
+//     if (event.isComposing || event.key === 49) {
+//       return;
+//     }
+// }
+// )
+const gameSwitch = () =>{
+    gameOn = !gameOn
+    if (gameOn){
+        console.log(`The game is ON`)
+    }else {
+        console.log(`The game is OFF`)
+    }
+}
+document.addEventListener("keydown", (event )=> {
+    if (event.isComposing || event.key === "space") {
+      return;
+    }
+    if(event.key === " "){
+        gameSwitch()
+    // console.log(event.key)
+    }
 })
+    
+    
+
+// const gamePlay = () =>{
+document.addEventListener('DOMContentLoaded', function () {
+        gameInterval
+    })
+// }
+
+    
+// }
+// if (!gameOn){
+// stopGameLoop()
+// topRight.style.backgroundColor = "white"
+// score.innerHTML = "Click Here to \nStart"
+// // topRight.addEventListener('click', gamePlay)
+// }
+
+
+// gamePlay()
