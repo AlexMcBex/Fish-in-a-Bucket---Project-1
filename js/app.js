@@ -28,9 +28,11 @@
 
 //////HTML Elements ///////
 //game start
+let endGame = false
 let gameOn = false
 // canvas
 const game = document.getElementById("river")
+const container = document.getElementById("container")
 // score
 let scoreFish = 0
 const topRight = document.getElementById("top-right")
@@ -41,27 +43,23 @@ let missedFish = 0
 const lostFish = document.getElementById("lost-score")
 lostFish.innerHTML = `${missedFish} /50`
 
-
-
-
 const ctx = game.getContext("2d")
-
 game.setAttribute('width', getComputedStyle(game)['width'])
 game.setAttribute('height', getComputedStyle(game)['height'])
 game.width = 600
 // game.height = 800
 
 class Fish {
-    constructor(height, width, x, y, color, safe, points,) {
+    constructor(height, width, x,  color, safe, points,) {
         this.height = height
         this.width = width
         this.x = x
-        this.y = y
+        this.y = -90
         this.color = color
         this.safe = safe
         this.points = points
         this.isVisible = true
-        this.speed = 15
+        this.speed = 27
         this.render = function () {
             ctx.fillStyle = this.color
             ctx.fillRect(this.x, this.y, this.width, this.height)
@@ -85,10 +83,10 @@ class Fish {
 // const player = new Bucket(265, 800, 70, 90, 'brown')
 //bucket
 const player = {
-    x : 265,
+    x : 250,
     y : 810,
-    width : 70,
-    height : 90,
+    width : 100,
+    height : 120,
     color : "brown",
     alive : true,
     speed : 15,
@@ -135,31 +133,61 @@ const player = {
     }
 }
 
-// const randomSpawn = () =>{
-//     return (Math.floor(Math.random() * (game.width-this.width)))
-// }
-// //needs to be in a function that creates consts
-// const newFish = () => {
+const goodFish = new Fish(50, 20, 290, "yellow", true, 5,)
+const bombFish = new Fish(45, 45, 200,  "black", false, 0)
+//function to switch game ON/OFF
+const gameSwitch = () =>{
+    gameOn = !gameOn
+    if (gameOn){
+        console.log(`The game is ON`)
+    }else {
+        console.log(`The game is OFF`)
+    }
+}
+//game (re)start
+const gameStart = () =>{
+    endGame = false
+    scoreFish = 0
+    missedFish = 0
+    gameOn = true
+    goodFish.y = -90
+    bombFish.y = -90
+    player.x = 265
+}
 
-// }
-const goodFish = new Fish(50, 20, 300, -60, "yellow", true, 5,)
-const bombFish = new Fish(45, 45, 200, -60, "black", false, 0)
-// console.log(goodFish.y)
+//gameOver
+const gameOver = (e) =>{
+    gameOn = false
+    endGame = true
+    
+    // const scoreBoard = document.createElement("div")
+    // container.appendChild(scoreBoard)
+    // scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish...`
+    if (e === "bomb"){
+        console.log("BOOM")
+     } else if (e === "miss")fish
+}
 
-const detectCatch = (thing) => {
+const detectCatch = (fish) => {
     if (
-        player.x + 2 < thing.x + thing.width
-        && player.x + player.width - 2 > thing.x
-        && (player.y === thing.y + thing.height
-        || player.y +5 === thing.y + thing.height)
-        ) {
-            if (thing.safe){
+        player.x + fish.width * 0.2 < fish.x + fish.width
+        && player.x + player.width - fish.width * 0.2 > fish.x
+        && player.y <= fish.y + fish.height + fish.speed
+        // && player.y < fish.y + fish.height
+        // && player.y + player.height > fish.y
+
+        // && (player.y === fish.y + fish.height
+        // || player.y +5 === fish.y + fish.height)
+        )
+         {
+            if (fish.safe){
             console.log('got a fish!')
-            scoreFish += thing.points
-            thing.isVisible = false
+            scoreFish += fish.points
+            fish.isVisible = false
         }else{
-            thing.isVisible = false
-            console.log("BOOM")
+            fish.isVisible = false
+            // console.log("BOOM")
+            gameOver("bomb")
         }
         } 
     }
@@ -169,18 +197,29 @@ const missFish = (e) =>{
         && e.isVisible) {
         e.isVisible = false
         missedFish += e.points
-        if(e.safe)
-        console.log(`you missed ${missedFish} pounds of good Fish!`)
+        // if(e.safe)
+        // console.log(`you missed ${missedFish} pounds of good Fish!`)
     } else if (!e.isVisible){
         e.y = -90
-        e.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
+        e.x = (Math.floor(Math.random() * (game.width-e.width)))
         e.isVisible = true
     }
 }
 
+// const speedUp = (fish) => {
+//     if(score >= 10){
+//         fish.speed + fish.speed + 10
+//         console.log(`speedUp: ${fish.speed}`)
+//     } else if (score >= 50){
+//         fish.speed + fish.speed + 10
+//     }
+// }
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
 if (gameOn){
+    
+// speedUp(goodFish)
+// speedUp(bombFish)
 goodFish.render()
 goodFish.fishMovement()
 detectCatch(goodFish)
@@ -192,8 +231,10 @@ missFish(bombFish)
 player.render()
 player.movePlayer()
 score.innerHTML = scoreFish
-lostFish.innerHTML = `${missedFish} /100`}
+lostFish.innerHTML = `${missedFish} /50`
 }
+}
+
 //Events for key pressing and releasing
 document.addEventListener('keydown', (e) => {
     player.setDirection(e.key)
@@ -203,53 +244,40 @@ document.addEventListener('keyup', (e) => {
         player.unsetDirection(e.key)
     }
 })
+
 const gameInterval = setInterval(gameLoop, 60)
 const stopGameLoop = () => { clearInterval(gameInterval) }
+if(!gameOn){
+    // const clearInterval = () =>{
+    //     setTimeout(ctx.clearRect(0, 0, game.width, game.height), 250)
+    // }
+    // const pauseInterval = setInterval(() =>{
+        // clearInterval()
+        // stopGameLoop()
+        goodFish.render()
+        bombFish.render()
+        player.render()
+    // }, 1000)
+} 
 
 
-
-
-// if (gameOn) {
-// document.addEventListener('keydown', (event) => {
-//     if (event.isComposing || event.key === 49) {
-//       return;
-//     }
-// }
-// )
-const gameSwitch = () =>{
-    gameOn = !gameOn
-    if (gameOn){
-        console.log(`The game is ON`)
-    }else {
-        console.log(`The game is OFF`)
-    }
-}
+//when you click on SPACE key
 document.addEventListener("keydown", (event )=> {
     if (event.isComposing || event.key === "space") {
       return;
     }
-    if(event.key === " "){
+    if(event.key === " "
+    && endGame === false){
         gameSwitch()
     // console.log(event.key)
+    }else if(event.key === " "
+    && endGame === true){
+        gameStart()
     }
 })
-    
-    
 
-// const gamePlay = () =>{
+    
+    
 document.addEventListener('DOMContentLoaded', function () {
         gameInterval
     })
-// }
-
-    
-// }
-// if (!gameOn){
-// stopGameLoop()
-// topRight.style.backgroundColor = "white"
-// score.innerHTML = "Click Here to \nStart"
-// // topRight.addEventListener('click', gamePlay)
-// }
-
-
-// gamePlay()
