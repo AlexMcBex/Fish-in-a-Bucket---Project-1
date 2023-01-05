@@ -38,6 +38,9 @@ let scoreFish = 0
 const topRight = document.getElementById("top-right")
 const score = document.getElementById("score")
 score.innerHTML = scoreFish
+//scoreBoard
+const scoreBoard = document.getElementById("scoreBoardContainer")
+
 // lost fish
 let missedFish = 0
 const lostFish = document.getElementById("lost-score")
@@ -50,7 +53,7 @@ game.width = 600
 // game.height = 800
 
 class Fish {
-    constructor(height, width, x,  color, safe, points,) {
+    constructor(height, width, x,  color, safe, points, imgsrc,) {
         this.height = height
         this.width = width
         this.x = x
@@ -59,10 +62,15 @@ class Fish {
         this.safe = safe
         this.points = points
         this.isVisible = true
-        this.speed = 27
+        this.speed = 15
+        this.imgsrc = imgsrc
         this.render = function () {
-            ctx.fillStyle = this.color
-            ctx.fillRect(this.x, this.y, this.width, this.height)
+              
+        const fishimg = new Image
+        fishimg.src = this.imgsrc
+        ctx.drawImage(fishimg, this.x, this.y)
+            // ctx.fillStyle = this.color
+            // ctx.fillRect(this.x, this.y, this.width, this.height)
         }
         this.fishMovement = function () {
             this.y += this.speed
@@ -80,7 +88,7 @@ class Fish {
     }
 }
 
-// const player = new Bucket(265, 800, 70, 90, 'brown')
+
 //bucket
 const player = {
     x : 250,
@@ -118,9 +126,15 @@ const player = {
             }
         }
     },
+    
     render: function () {
-        ctx.fillStyle = this.color
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        
+        const playerimg = new Image
+        playerimg.src = "../img/pixelbucket.png"
+        ctx.drawImage(playerimg, this.x, this.y)
+
+        // ctx.fillStyle = this.color
+        // ctx.fillRect(this.x, this.y, this.width, this.height)
 //         ctx.drawBucket = () =>{
 // ctx.beginPath();
 // ctx.moveTo(0, 0);
@@ -132,9 +146,11 @@ const player = {
 // ctx.fill();
     }
 }
-
-const goodFish = new Fish(50, 20, 290, "yellow", true, 5,)
-const bombFish = new Fish(45, 45, 200,  "black", false, 0)
+// let spawnGoodFish2 = 
+const goodFish = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
+// const goodFish2 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
+// const goodFish3 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
+const bombFish = new Fish(60, 60, 200,  "black", false, 0, "../img/pixelbombfish.png")
 //function to switch game ON/OFF
 const gameSwitch = () =>{
     gameOn = !gameOn
@@ -153,6 +169,8 @@ const gameStart = () =>{
     goodFish.y = -90
     bombFish.y = -90
     player.x = 265
+        scoreBoard.style.display = "none"
+
 }
 
 //gameOver
@@ -165,7 +183,9 @@ const gameOver = (e) =>{
     // scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish...`
     if (e === "bomb"){
         console.log("BOOM")
-     } else if (e === "miss")fish
+     } else if (e === "miss"){
+        console.log("missed too many fish")
+     }
 }
 
 const detectCatch = (fish) => {
@@ -208,10 +228,10 @@ const missFish = (e) =>{
 
 // const speedUp = (fish) => {
 //     if(score >= 10){
-//         fish.speed + fish.speed + 10
+//         fish.speed = fish.speed + 10
 //         console.log(`speedUp: ${fish.speed}`)
 //     } else if (score >= 50){
-//         fish.speed + fish.speed + 10
+//         fish.speed = fish.speed + 10
 //     }
 // }
 const gameLoop = () => {

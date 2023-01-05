@@ -1,11 +1,12 @@
 body {
     background: black;
     height: 100%;
-    align-content: center;
+    text-align: center;
+    font-family: "Finger Paint", verdana;
 }
 #container {
     display: grid;
-    background: green;
+    background-image: url("../img/pixelgrass.png");
     grid-template-columns: 0.2fr 0.6fr  0.2fr;
     grid-template-rows: 0.5fr 0.5fr;
     grid-template-areas: "top-left river top-right" 
@@ -45,8 +46,35 @@ main {
     margin: 6px;
   }
   canvas {
-    background-color: lightskyblue;
+    background-image: url("../img/pixelwater.png");
     width: 600px;
     height: 100%;
     margin: 0;
+  }
+
+  #scoreBoardContainer{
+    display: none;
+    position: absolute;
+    background-image: url("../img/pixelwood.png");
+    border-radius: 5px;
+    border: 30px double rgb(77, 35, 15);
+    color: white;
+    z-index: 2;
+    width: 500px;
+    height: 500px;
+    /* margin: 0 auto; */
+    text-align: center;
+    top: 25%;
+    left: 390px;
+
+  }
+  #scoreboard{
+    margin: 5px;
+    line-height: 20px;
+  }
+
+  hr{
+    color: white;
+    width: 300px;
+  height: 4px;
   }
