@@ -53,7 +53,7 @@ main {
   }
 
   #scoreBoardContainer{
-    display: none;
+    /* display: none; */
     position: absolute;
     background-image: url("../img/pixelwood.png");
     border-radius: 5px;
