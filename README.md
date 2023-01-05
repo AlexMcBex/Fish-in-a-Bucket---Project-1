@@ -31,7 +31,7 @@ Good luck!
 
 ## Wireframes and screenshots
 1. This is the home screen, from there the user can start the game or read the instructions.
-  ![home-screen](img/screenshot-start.png.png)
+  ![home-screen](img/screenshot-start.png)
 2. In the instructions the captain will explain to the user the various types of fishes to catch, the winning and the losing conditions.
   ![instructions](img/instructions.jpg)
 3. The gameplay is very simple, the bucket moves right and left while the fishes come towards you, your objective is catch the good ones and avoid the fishbombs. ![gameplay](img/screenshot-gameplay.png)
