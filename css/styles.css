@@ -74,7 +74,7 @@ main {
   }
 
   hr{
-    color: white;
+   background-color: white;
     width: 300px;
   height: 4px;
   }

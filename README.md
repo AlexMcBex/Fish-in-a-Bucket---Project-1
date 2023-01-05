@@ -31,10 +31,10 @@ Good luck!
 
 ## Wireframes and screenshots
 1. This is the home screen, from there the user can start the game or read the instructions.
-  ![home-screen](img/screenshot-start.png.jpg)
+  ![home-screen](img/screenshot-start.png)
 2. In the instructions the captain will explain to the user the various types of fishes to catch, the winning and the losing conditions.
   ![instructions](img/instructions.jpg)
-3. The gameplay is very simple, the bucket moves right and left while the fishes come towards you, your objective is catch the good ones and avoid the fishbombs. ![gameplay](img/screenshot-gameplay.jpg)
+3. The gameplay is very simple, the bucket moves right and left while the fishes come towards you, your objective is catch the good ones and avoid the fishbombs. ![gameplay](img/screenshot-gameplay.png)
 4. If you pick up a fishbomb you make the ship explode and the game over screen will pop up. ![gameover-bomb](img/gameover-bomb.jpg)
 5. If you miss to many fishes the captain will tie you to the mast of the ship and it will be game over as well. ![gameover-miss](img/gameover-miss.jpg)
 6. Although if you manage to catch enough fishes for your crew you will win the level. he next one will have a larger crew so it will require more fish to be caught. ![win](img/youwin.jpg)

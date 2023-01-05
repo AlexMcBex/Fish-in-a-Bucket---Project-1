@@ -39,8 +39,8 @@ const topRight = document.getElementById("top-right")
 const score = document.getElementById("score")
 score.innerHTML = scoreFish
 //scoreBoard
-const scoreBoard = document.getElementById("scoreBoardContainer")
-
+const scoreBoardContainer = document.getElementById("scoreBoardContainer")
+const scoreBoard = document.getElementById("scoreBoard")
 // lost fish
 let missedFish = 0
 const lostFish = document.getElementById("lost-score")
@@ -53,16 +53,15 @@ game.width = 600
 // game.height = 800
 
 class Fish {
-    constructor(height, width, x,  color, safe, points, imgsrc,) {
+    constructor(height, width, x,  speed, safe, points, imgsrc,) {
         this.height = height
         this.width = width
         this.x = x
         this.y = -90
-        this.color = color
+        this.speed = speed
         this.safe = safe
         this.points = points
         this.isVisible = true
-        this.speed = 15
         this.imgsrc = imgsrc
         this.render = function () {
               
@@ -146,18 +145,23 @@ const player = {
 // ctx.fill();
     }
 }
+const goodFish = new Fish(90, 40, 290, 15, true, 5, "../img/pixelgoodfishvert.png")
 // let spawnGoodFish2 = 
-const goodFish = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
 // const goodFish2 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
 // const goodFish3 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
-const bombFish = new Fish(60, 60, 200,  "black", false, 0, "../img/pixelbombfish.png")
+const bombFish = new Fish(60, 60, 200,  15, false, 0, "../img/pixelbombfish.png")
 //function to switch game ON/OFF
 const gameSwitch = () =>{
     gameOn = !gameOn
     if (gameOn){
         console.log(`The game is ON`)
+    scoreBoardContainer.style.display = "none"
+    console.log(scoreBoardContainer.style.display)
     }else {
         console.log(`The game is OFF`)
+        scoreBoardContainer.style.display = "inline-block"
+        scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
+
     }
 }
 //game (re)start
@@ -169,22 +173,34 @@ const gameStart = () =>{
     goodFish.y = -90
     bombFish.y = -90
     player.x = 265
-        scoreBoard.style.display = "none"
-
+    scoreBoardContainer.style.display = "none"
 }
 
 //gameOver
 const gameOver = (e) =>{
     gameOn = false
     endGame = true
-    
+    scoreBoardContainer.style.display = "inline-block"
+
     // const scoreBoard = document.createElement("div")
     // container.appendChild(scoreBoard)
     // scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish...`
-    if (e === "bomb"){
-        console.log("BOOM")
-     } else if (e === "miss"){
+    if (e === "bomb"
+    && scoreFish > 0){
+        console.log("BOOM") 
+        scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish <br><img src="../img/pixelgoodfishhorizontal.png"><br>but you also caught a Bomb fish and your bucket exploded to pieces! <br> <img src="../img/pixelbombfish.png"> <hr> Click SPACE to start a New Game`
+
+     } else if (e==="bomb"
+        &&scoreFish === 0){
+            console.log("BOOM") 
+            scoreBoard.innerHTML = `You literally caught only a Bomb fish... after I told you not to! well... now your bucket exploded to pieces and you're still hungry.<br> <img src="../img/pixelbombfish.png"> <hr> Click SPACE to start a New Game`
+        }else if (e === "miss"
+        && scoreFish > 0){
         console.log("missed too many fish")
+        scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish <br><img src="../img/pixelgoodfishhorizontal.png"><br>but you also missed ${missedFish} lbs of good fish, what a waste! <hr> Click SPACE to start a New Game`
+     } else if (e === "miss"
+     && scoreFish === 0){
+        scoreBoard.innerHTML = `I'm sorry lad, I think you misunderstood what is happening here.. You missed ${missedFish} lbs of good fish, you're supposed to catch it! Try again!<br><img src="../img/pixelgoodfishhorizontal.png"><hr> Click SPACE to start a New Game`
      }
 }
 
@@ -193,6 +209,7 @@ const detectCatch = (fish) => {
         player.x + fish.width * 0.2 < fish.x + fish.width
         && player.x + player.width - fish.width * 0.2 > fish.x
         && player.y <= fish.y + fish.height + fish.speed
+        && player.y + player.height * 0.5 > fish.y + fish.height
         // && player.y < fish.y + fish.height
         // && player.y + player.height > fish.y
 
@@ -217,6 +234,9 @@ const missFish = (e) =>{
         && e.isVisible) {
         e.isVisible = false
         missedFish += e.points
+        if(missedFish >= 50){
+            gameOver("miss")
+        }
         // if(e.safe)
         // console.log(`you missed ${missedFish} pounds of good Fish!`)
     } else if (!e.isVisible){
