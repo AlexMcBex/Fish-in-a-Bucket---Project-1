@@ -134,26 +134,32 @@ const player = {
 
 //Fish Spawn
 let spawnFish = (fish) => {
-    const  random = () =>{
-        return Math.floor(Math.random() * 10)
+    const  left = () =>{
+        let x = Math.floor(Math.random() * 10)
+        if (x <= 4){
+            return true
+        } else {
+            return false
+        }
     }
     const randomX = () =>{
-        return Math.floor((Math.random() * 175)+50)
+        return Math.floor((Math.random() * 100)+50)
     }
     // console.log(randomX())
     if(fish.x - randomX() > 0
-        && random() < 5 ){
+        && left() ){
     return fish.x - randomX()
 }else if (fish.x + randomX() + fish.width < game.width 
-     && random() >= 5){
+     && !left()){
     return fish.x + randomX()
 } else if (fish.x + randomX() + fish.width > game.width 
-    && random() >= 5){
+    && !left){
    return fish.x - randomX()
 }if(fish.x - randomX() < 0
-    && random() < 5 ){
+    && left ){
 return fish.x + randomX()
-}else {
+}
+else {
     console.log("no condition ops")
     return fish.x
 }
@@ -225,10 +231,6 @@ const gameStart = () =>{
             gameOn = true
             gamePause = false
             console.log(`The game is ON`)
-            setTimeout(() =>{
-                fishes.push(goldFish)
-                goldFish.y - 90
-            }, 30000)
         }, 2000)
     scoreFish = 0
     missedFish = 0
@@ -305,7 +307,6 @@ const detectCatch = (fish) => {
             // fish.isVisible = false
             setTimeout(() =>{
                 fishes.push(goldFish)
-                goldFish.y - 90
             }, 30000)
             speedUp(fish)
             let goldSound = new Audio("../audio/goldcatch.wav")
@@ -323,22 +324,22 @@ const detectCatch = (fish) => {
 // if you don't catch the fish it goes miss
 const missFish = (e) =>{
     if (e.y + e.speed   > game.height 
-        && e.isVisible
+        && e.isVisible && e !== goldFish
         ) {
         e.isVisible = false
-        if(e.safe && e!==goldFish){
-        console.log(`you missed ${missedFish} pounds of good Fish!`)
-        let missSound = new Audio("../audio/miss.wav")
-        missSound.play()}
         missedFish += e.points
         if(missedFish >= 50){
             gameOver("miss")
         }
+        if(e.safe){
+        console.log(`you missed ${missedFish} pounds of good Fish!`)
+        let missSound = new Audio("../audio/miss.wav")
+        missSound.play()}
     } else if(e.y + e.speed   > game.height 
-        && e.isVisible && e !== goldFish ){
-            
-            e.isVisible = false
-        // }else if (!e.isVisible && e !== goldFish){
+        && e.isVisible && e !== goldFish
+        ){
+        e.isVisible = false
+        }else if (!e.isVisible && e !== goldFish){
         e.y = -90
         if (e=== goodFish 
             || e === bombFish){
