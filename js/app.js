@@ -166,14 +166,12 @@ const fishes = [goodFish, goodFish2, fatFish ,bombFish]
 
 //function to switch game ON/OFF
 const gameSwitch = () =>{
-    
-    //if paused 321 if not start
     if (gamePause && !gameOn){
-        const pauseRender =()=>{
-            for(let i = 0; i < fishes.length; i++){
-                fishes[i].render()}
-                player.render()}
-        setInterval(pauseRender, 750)
+        // const pauseRender =()=>{
+        //     for(let i = 0; i < fishes.length; i++){
+        //         fishes[i].render()}
+        //         player.render()}
+        // setInterval(pauseRender, 750)
         setTimeout(() =>{scoreBoard.innerHTML = "3"
         scoreBoardContainer.style.opacity = "0.9"}, 500)
         setTimeout(() => {
@@ -188,17 +186,12 @@ const gameSwitch = () =>{
                 scoreBoard.innerHTML = ""
                 scoreBoardContainer.style.display = "none"
                 scoreBoardContainer.style.opacity = "1"
-                clearInterval(pauseRender)
+                // clearInterval(pauseRender)
                 gameOn = true
                 gamePause = false
                 console.log(`The game is ON`)
             }, 2000)
-    }
-    // fish.render / player
-    //TIMEOUT HERE
-    // gameOn = !gameOn
-    // gamePause = !gamePause
-    if (gameOn 
+    } else if (gameOn 
         && !gamePause
         && !endGame){
             gameOn = false
@@ -207,6 +200,12 @@ const gameSwitch = () =>{
             scoreBoardContainer.style.display = "inline-block"
             scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
     }
+}
+    // fish.render / player
+    //TIMEOUT HERE
+    // gameOn = !gameOn
+    // gamePause = !gamePause
+   
     // else if (!gameOn 
     //     && gamePause
     //     && !endGame) {
@@ -214,22 +213,22 @@ const gameSwitch = () =>{
     //     scoreBoardContainer.style.display = "inline-block"
     //     scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
 
-    }
+    
 // }
 
 //game (re)start
 const gameStart = () =>{
-    endGame = false
-    gamePause = false
     scoreFish = 0
     missedFish = 0
     goodFish.y = -90
     goodFish2.y = -390
+    goodFish2.y = -690
     bombFish.y = -90
     player.x = 265
+    endGame = false
+    gamePause = false
     gameOn = true
-    scoreBoardContainer.style.display = "none"
-    
+    // scoreBoardContainer.style.display = "none"
     for(let i = 0; i < fishes.length; i++){
         fishes[i].speed = 15
         player.speed = 15
@@ -297,6 +296,7 @@ const detectCatch = (fish) => {
         }
         } 
     }
+
 // if you don't catch the fish it goes miss
 const missFish = (e) =>{
     if (e.y + e.speed   > game.height 
@@ -325,6 +325,7 @@ const missFish = (e) =>{
     }
 }
 
+//spawn fish function
 const fishSpawn = (fish) =>{
     fish.render()
     fish.fishMovement()
@@ -332,17 +333,23 @@ const fishSpawn = (fish) =>{
     missFish(fish)
 }
 
+// Game Loop
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
 if (gameOn){
     for(let i = 0; i < fishes.length; i++){
-        fishSpawn(fishes[i])
-}
-player.render()
-player.movePlayer()
-score.innerHTML =   `Caught lbs <br>of Fish <br> ${scoreFish}`
-lostFish.innerHTML = `Missed lbs<br>of Fish<br>${missedFish} /50`
-}
+        fishSpawn(fishes[i])}
+    player.render()
+    player.movePlayer()
+    score.innerHTML =   `Caught lbs <br>of Fish <br> ${scoreFish}`
+    lostFish.innerHTML = `Missed lbs<br>of Fish<br>${missedFish} /50`
+} 
+// else if (gamePause){
+//     for(let i = 0; i < fishes.length; i++){
+//        fishes[i].render()
+//        player.render()
+// }
+// }
 }
 
 //Events for key pressing and releasing
@@ -356,7 +363,7 @@ document.addEventListener('keyup', (e) => {
 })
 
 const gameInterval = setInterval(gameLoop, 60)
-const stopGameLoop = () => { clearInterval(gameInterval) }
+// const stopGameLoop = () => { clearInterval(gameInterval) }
 // if(!gameOn){
     // const clearInterval = () =>{
     //     setTimeout(ctx.clearRect(0, 0, game.width, game.height), 250)
@@ -379,7 +386,7 @@ document.addEventListener("keydown", (event )=> {
     if(event.key === " "
     && endGame === false){
         gameSwitch()
-    // console.log(event.key)
+    console.log(event.key)
     }else if(event.key === " "
     && endGame === true){
         gameStart()
