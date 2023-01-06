@@ -131,22 +131,42 @@ const player = {
         // ctx.fillRect(this.x, this.y, this.width, this.height)
     }
 }
+
+//Fish Spawn
+// let fishX = 300
+let spawnFish = (fish) => {
+    const  random = () =>{
+        return Math.floor(Math.random() * 10)
+    }
+    console.log(random())
+    if(fish.x + 100 + fish.width >= game.width
+        ||random() < 5 ){
+    return fish.x - 100
+}else if ( fish.x - 100 < 0
+    ||random() >= 5){
+    return fish.x + 100
+} else {
+    return fish.x
+}
+}
 const goodFish = new Fish(90, 40, 290, 15, true, 5, "../img/pixelgoodfishvert.png")
-// let spawnGoodFish = (fish) => {
-//     return fish.x + 100
-// }
-const goodFish2 = new Fish(90, 40, 390, 15, true, 5, "../img/pixelgoodfishvert.png")
+const goodFish2 = new Fish(90, 40, spawnFish(goodFish), 15, true, 5, "../img/pixelgoodfishvert.png")
 goodFish2.y -= 300
-// const goodFish3 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
+const fatFish = new Fish(100, 75,  spawnFish(goodFish2), 15, true, 10, "../img/pixelfatfish.png")
+fatFish.y = -600
+// const goldFish = new Fish (50, 30, 300, 15, true, 100, "../img/pixelgoldfish.png")
 const bombFish = new Fish(60, 60, 200,  15, false, 0, "../img/pixelbombfish.png")
 
 
 //fish array
-const fishes = [goodFish, goodFish2, bombFish]
+const fishes = [goodFish, goodFish2, fatFish ,bombFish]
 
 
 //function to switch game ON/OFF
 const gameSwitch = () =>{
+    //if paused 321 if not start
+    // fish.render / player
+    //TIMEOUT HERE
     gameOn = !gameOn
     if (gameOn){
         console.log(`The game is ON`)
@@ -155,7 +175,7 @@ const gameSwitch = () =>{
     }else {
         console.log(`The game is OFF`)
         scoreBoardContainer.style.display = "inline-block"
-        scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
+        scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
 
     }
 }
@@ -203,7 +223,7 @@ const gameOver = (e) =>{
 const speedUp = (fish) => {
     for(let i = 0; i < fishes.length; i++){
         fishes[i].speed = fishes[i].speed * 1.01
-        player.speed *= 1.007
+        player.speed *= 1.006
         // console.log(`speedUp: ${fish}'s speed is now: ${fish.speed}`)
         // console.log(fishes[i])
     }
@@ -255,7 +275,14 @@ const missFish = (e) =>{
         missSound.play()}
     } else if (!e.isVisible){
         e.y = -90
+        if (e=== goodFish 
+            || e === bombFish){
         e.x = (Math.floor(Math.random() * (game.width-e.width)))
+        } else if( e===goodFish2) {
+            e.x = spawnFish(goodFish)
+        } else if(e === fatFish){
+            e.x = spawnFish(goodFish2)
+        }
         e.isVisible = true
     }
 }
@@ -270,9 +297,9 @@ const fishSpawn = (fish) =>{
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
 if (gameOn){
-    fishSpawn(goodFish)
-    fishSpawn(bombFish)
-    fishSpawn(goodFish2)
+    for(let i = 0; i < fishes.length; i++){
+        fishSpawn(fishes[i])
+}
 player.render()
 player.movePlayer()
 score.innerHTML =   `Caught lbs <br>of Fish <br> ${scoreFish}`

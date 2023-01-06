@@ -53,7 +53,10 @@ main {
     height: 100%;
     margin: 0;
   }
-
+#title {
+  position:relative;
+  bottom: 40px;
+}
   #scoreBoardContainer{
     /* display: none; */
     position: absolute;
