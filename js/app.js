@@ -37,14 +37,14 @@ const container = document.getElementById("container")
 let scoreFish = 0
 const topRight = document.getElementById("top-right")
 const score = document.getElementById("score")
-score.innerHTML = scoreFish
+// score.innerHTML = scoreFish
 //scoreBoard
 const scoreBoardContainer = document.getElementById("scoreBoardContainer")
 const scoreBoard = document.getElementById("scoreBoard")
 // lost fish
 let missedFish = 0
 const lostFish = document.getElementById("lost-score")
-lostFish.innerHTML = `${missedFish} /50`
+// lostFish.innerHTML = `${missedFish} /50`
 
 const ctx = game.getContext("2d")
 game.setAttribute('width', getComputedStyle(game)['width'])
@@ -65,9 +65,9 @@ class Fish {
         this.imgsrc = imgsrc
         this.render = function () {
               
-        const fishimg = new Image
-        fishimg.src = this.imgsrc
-        ctx.drawImage(fishimg, this.x, this.y)
+        const fishImg = new Image
+        fishImg.src = this.imgsrc
+        ctx.drawImage(fishImg, this.x, this.y)
             // ctx.fillStyle = this.color
             // ctx.fillRect(this.x, this.y, this.width, this.height)
         }
@@ -77,11 +77,6 @@ class Fish {
                 this.y = game.height + 1
                 this.isVisible = false
                 // this.fishMovement()
-            }
-            if (!this.isVisible){
-                this.y = -90
-                this.x = (Math.floor(Math.random() * (game.width-goodFish.width)))
-                this.isVisible = true
             }
         }
     }
@@ -134,22 +129,22 @@ const player = {
 
         // ctx.fillStyle = this.color
         // ctx.fillRect(this.x, this.y, this.width, this.height)
-//         ctx.drawBucket = () =>{
-// ctx.beginPath();
-// ctx.moveTo(0, 0);
-// ctx.moveTo(70, 0);
-// ctx.lineTo(70, 5);
-// ctx.lineTo(60, 60);
-// ctx.lineTo(10, 60);
-// ctx.lineTo(0, 5);
-// ctx.fill();
     }
 }
 const goodFish = new Fish(90, 40, 290, 15, true, 5, "../img/pixelgoodfishvert.png")
-// let spawnGoodFish2 = 
-// const goodFish2 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
+// let spawnGoodFish = (fish) => {
+//     return fish.x + 100
+// }
+const goodFish2 = new Fish(90, 40, 390, 15, true, 5, "../img/pixelgoodfishvert.png")
+goodFish2.y -= 300
 // const goodFish3 = new Fish(90, 40, 290, "yellow", true, 5, "../img/pixelgoodfishvert.png")
 const bombFish = new Fish(60, 60, 200,  15, false, 0, "../img/pixelbombfish.png")
+
+
+//fish array
+const fishes = [goodFish, goodFish2, bombFish]
+
+
 //function to switch game ON/OFF
 const gameSwitch = () =>{
     gameOn = !gameOn
@@ -164,16 +159,24 @@ const gameSwitch = () =>{
 
     }
 }
+
 //game (re)start
 const gameStart = () =>{
     endGame = false
     scoreFish = 0
     missedFish = 0
-    gameOn = true
     goodFish.y = -90
+    goodFish2.y = -390
     bombFish.y = -90
     player.x = 265
+    gameOn = true
     scoreBoardContainer.style.display = "none"
+    
+    for(let i = 0; i < fishes.length; i++){
+        fishes[i].speed = 15
+        player.speed = 15
+    // console.log("game restart")
+}
 }
 
 //gameOver
@@ -181,29 +184,32 @@ const gameOver = (e) =>{
     gameOn = false
     endGame = true
     scoreBoardContainer.style.display = "inline-block"
-
-    // const scoreBoard = document.createElement("div")
-    // container.appendChild(scoreBoard)
-    // scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish...`
-    if (e === "bomb"
-    && scoreFish > 0){
+    if (e === "bomb" && scoreFish > 0){
         console.log("BOOM") 
         scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish <br><img src="../img/pixelgoodfishhorizontal.png"><br>but you also caught a Bomb fish and your bucket exploded to pieces! <br> <img src="../img/pixelbombfish.png"> <hr> Click SPACE to start a New Game`
 
-     } else if (e==="bomb"
-        &&scoreFish === 0){
+     } else if (e==="bomb" && scoreFish === 0){
             console.log("BOOM") 
             scoreBoard.innerHTML = `You literally caught only a Bomb fish... after I told you not to! well... now your bucket exploded to pieces and you're still hungry.<br> <img src="../img/pixelbombfish.png"> <hr> Click SPACE to start a New Game`
-        }else if (e === "miss"
-        && scoreFish > 0){
+        }else if (e === "miss" && scoreFish > 0){
         console.log("missed too many fish")
         scoreBoard.innerHTML = `You caught ${scoreFish} lbs of Fish <br><img src="../img/pixelgoodfishhorizontal.png"><br>but you also missed ${missedFish} lbs of good fish, what a waste! <hr> Click SPACE to start a New Game`
-     } else if (e === "miss"
-     && scoreFish === 0){
+     } else if (e === "miss" && scoreFish === 0){
         scoreBoard.innerHTML = `I'm sorry lad, I think you misunderstood what is happening here.. You missed ${missedFish} lbs of good fish, you're supposed to catch it! Try again!<br><img src="../img/pixelgoodfishhorizontal.png"><hr> Click SPACE to start a New Game`
      }
 }
 
+// speed incrementer
+const speedUp = (fish) => {
+    for(let i = 0; i < fishes.length; i++){
+        fishes[i].speed = fishes[i].speed * 1.01
+        player.speed *= 1.007
+        // console.log(`speedUp: ${fish}'s speed is now: ${fish.speed}`)
+        // console.log(fishes[i])
+    }
+    }
+
+//a fish gets caught
 const detectCatch = (fish) => {
     if (
         player.x + fish.width * 0.2 < fish.x + fish.width
@@ -221,24 +227,32 @@ const detectCatch = (fish) => {
             console.log('got a fish!')
             scoreFish += fish.points
             fish.isVisible = false
+            speedUp(fish)
+            let catchSound = new Audio("../audio/catch.wav")
+            catchSound.play()
         }else{
-            fish.isVisible = false
+            // fish.isVisible = false
             // console.log("BOOM")
+            let boomSound = new Audio("../audio/explosion.wav")
+            boomSound.play()
             gameOver("bomb")
         }
         } 
     }
 // if you don't catch the fish it goes miss
 const missFish = (e) =>{
-    if (e.y + e.height >= game.height 
-        && e.isVisible) {
+    if (e.y + e.speed   > game.height 
+        && e.isVisible
+        ) {
         e.isVisible = false
         missedFish += e.points
         if(missedFish >= 50){
             gameOver("miss")
         }
-        // if(e.safe)
-        // console.log(`you missed ${missedFish} pounds of good Fish!`)
+        if(e.safe){
+        console.log(`you missed ${missedFish} pounds of good Fish!`)
+        let missSound = new Audio("../audio/miss.wav")
+        missSound.play()}
     } else if (!e.isVisible){
         e.y = -90
         e.x = (Math.floor(Math.random() * (game.width-e.width)))
@@ -246,32 +260,23 @@ const missFish = (e) =>{
     }
 }
 
-// const speedUp = (fish) => {
-//     if(score >= 10){
-//         fish.speed = fish.speed + 10
-//         console.log(`speedUp: ${fish.speed}`)
-//     } else if (score >= 50){
-//         fish.speed = fish.speed + 10
-//     }
-// }
+const fishSpawn = (fish) =>{
+    fish.render()
+    fish.fishMovement()
+    detectCatch(fish)
+    missFish(fish)
+}
+
 const gameLoop = () => {
     ctx.clearRect(0, 0, game.width, game.height)
 if (gameOn){
-    
-// speedUp(goodFish)
-// speedUp(bombFish)
-goodFish.render()
-goodFish.fishMovement()
-detectCatch(goodFish)
-missFish(goodFish)
-bombFish.render()
-bombFish.fishMovement()
-detectCatch(bombFish)
-missFish(bombFish)
+    fishSpawn(goodFish)
+    fishSpawn(bombFish)
+    fishSpawn(goodFish2)
 player.render()
 player.movePlayer()
-score.innerHTML = scoreFish
-lostFish.innerHTML = `${missedFish} /50`
+score.innerHTML =   `Caught lbs <br>of Fish <br> ${scoreFish}`
+lostFish.innerHTML = `Missed lbs<br>of Fish<br>${missedFish} /50`
 }
 }
 
@@ -287,18 +292,18 @@ document.addEventListener('keyup', (e) => {
 
 const gameInterval = setInterval(gameLoop, 60)
 const stopGameLoop = () => { clearInterval(gameInterval) }
-if(!gameOn){
+// if(!gameOn){
     // const clearInterval = () =>{
     //     setTimeout(ctx.clearRect(0, 0, game.width, game.height), 250)
     // }
     // const pauseInterval = setInterval(() =>{
         // clearInterval()
         // stopGameLoop()
-        goodFish.render()
-        bombFish.render()
-        player.render()
+        // goodFish.render()
+        // bombFish.render()
+        // player.render()
     // }, 1000)
-} 
+// } 
 
 
 //when you click on SPACE key
@@ -316,8 +321,10 @@ document.addEventListener("keydown", (event )=> {
     }
 })
 
-    
+      
     
 document.addEventListener('DOMContentLoaded', function () {
         gameInterval
     })
+
+    
