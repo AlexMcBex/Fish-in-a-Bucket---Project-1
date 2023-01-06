@@ -38,7 +38,6 @@ const container = document.getElementById("container")
 let scoreFish = 0
 const topRight = document.getElementById("top-right")
 const score = document.getElementById("score")
-// score.innerHTML = scoreFish
 //scoreBoard
 const scoreBoardContainer = document.getElementById("scoreBoardContainer")
 const scoreBoard = document.getElementById("scoreBoard")
@@ -68,7 +67,8 @@ class Fish {
               
         const fishImg = new Image
         fishImg.src = this.imgsrc
-        ctx.drawImage(fishImg, this.x, this.y)
+        if(this.isVisible){
+        ctx.drawImage(fishImg, this.x, this.y)}
             // ctx.fillStyle = this.color
             // ctx.fillRect(this.x, this.y, this.width, this.height)
         }
@@ -82,7 +82,6 @@ class Fish {
         }
     }
 }
-
 
 //bucket
 const player = {
@@ -138,14 +137,24 @@ let spawnFish = (fish) => {
     const  random = () =>{
         return Math.floor(Math.random() * 10)
     }
-    console.log(random())
-    if(fish.x + 100 + fish.width >= game.width
-        ||random() < 5 ){
-    return fish.x - 100
-}else if ( fish.x - 100 < 0
-    ||random() >= 5){
-    return fish.x + 100
-} else {
+    const randomX = () =>{
+        return Math.floor((Math.random() * 175)+50)
+    }
+    // console.log(randomX())
+    if(fish.x - randomX() > 0
+        && random() < 5 ){
+    return fish.x - randomX()
+}else if (fish.x + randomX() + fish.width < game.width 
+     && random() >= 5){
+    return fish.x + randomX()
+} else if (fish.x + randomX() + fish.width > game.width 
+    && random() >= 5){
+   return fish.x - randomX()
+}if(fish.x - randomX() < 0
+    && random() < 5 ){
+return fish.x + randomX()
+}else {
+    console.log("no condition ops")
     return fish.x
 }
 }
@@ -156,22 +165,15 @@ const goodFish2 = new Fish(90, 40, spawnFish(goodFish), 15, true, 5, "../img/pix
 goodFish2.y -= 300
 const fatFish = new Fish(100, 75,  spawnFish(goodFish2), 15, true, 10, "../img/pixelfatfish.png")
 fatFish.y = -600
-// const goldFish = new Fish (50, 30, 300, 15, true, 100, "../img/pixelgoldfish.png")
+const goldFish = new Fish (50, 30, spawnFish(fatFish), 15, true, 100, "../img/pixelgoldfish.png")
 const bombFish = new Fish(60, 60, 200,  15, false, 0, "../img/pixelbombfish.png")
-
 
 //fish array
 const fishes = [goodFish, goodFish2, fatFish ,bombFish]
 
-
 //function to switch game ON/OFF
 const gameSwitch = () =>{
     if (gamePause && !gameOn){
-        // const pauseRender =()=>{
-        //     for(let i = 0; i < fishes.length; i++){
-        //         fishes[i].render()}
-        //         player.render()}
-        // setInterval(pauseRender, 750)
         setTimeout(() =>{scoreBoard.innerHTML = "3"
         scoreBoardContainer.style.opacity = "0.9"}, 500)
         setTimeout(() => {
@@ -201,33 +203,36 @@ const gameSwitch = () =>{
             scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
     }
 }
-    // fish.render / player
-    //TIMEOUT HERE
-    // gameOn = !gameOn
-    // gamePause = !gamePause
-   
-    // else if (!gameOn 
-    //     && gamePause
-    //     && !endGame) {
-    //     console.log(`The game is OFF`)
-    //     scoreBoardContainer.style.display = "inline-block"
-    //     scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
-
-    
-// }
 
 //game (re)start
 const gameStart = () =>{
+    setTimeout(() =>{scoreBoard.innerHTML = "3"
+    scoreBoardContainer.style.opacity = "0.9"}, 500)
+    setTimeout(() => {
+    scoreBoard.innerHTML = "2"
+    scoreBoardContainer.style.opacity = "0.6"
+    }, 1000)
+    setTimeout(() => {
+        scoreBoard.innerHTML = "1"
+        scoreBoardContainer.style.opacity = "0.3"
+        }, 1500)
+        setTimeout(() => {
+            scoreBoard.innerHTML = ""
+            scoreBoardContainer.style.display = "none"
+            scoreBoardContainer.style.opacity = "1"
+            // clearInterval(pauseRender)
+            endGame = false
+            gameOn = true
+            gamePause = false
+            console.log(`The game is ON`)
+        }, 2000)
     scoreFish = 0
     missedFish = 0
     goodFish.y = -90
     goodFish2.y = -390
-    goodFish2.y = -690
-    bombFish.y = -90
+    fatFish.y = -690
+    bombFish.y = -1100
     player.x = 265
-    endGame = false
-    gamePause = false
-    gameOn = true
     // scoreBoardContainer.style.display = "none"
     for(let i = 0; i < fishes.length; i++){
         fishes[i].speed = 15
@@ -280,13 +285,27 @@ const detectCatch = (fish) => {
         // || player.y +5 === fish.y + fish.height)
         )
          {
-            if (fish.safe){
+            if (fish.safe && fish !== goldFish){
             console.log('got a fish!')
             scoreFish += fish.points
             fish.isVisible = false
             speedUp(fish)
             let catchSound = new Audio("../audio/catch.wav")
             catchSound.play()
+            //goldfish catch detection
+        }else if (fish.safe && fish === goldFish){
+            fishes.pop()
+            goldFish.y -90
+            console.log('got a Golden fish!')
+            scoreFish += fish.points
+            // fish.isVisible = false
+            setTimeout(() =>{
+                fishes.push(goldFish)
+                goldFish.y - 90
+            }, 30000)
+            speedUp(fish)
+            let goldSound = new Audio("../audio/goldcatch.wav")
+            goldSound.play()
         }else{
             // fish.isVisible = false
             // console.log("BOOM")
@@ -300,7 +319,7 @@ const detectCatch = (fish) => {
 // if you don't catch the fish it goes miss
 const missFish = (e) =>{
     if (e.y + e.speed   > game.height 
-        && e.isVisible
+        && e.isVisible && e !== goldFish
         ) {
         e.isVisible = false
         missedFish += e.points
@@ -311,7 +330,11 @@ const missFish = (e) =>{
         console.log(`you missed ${missedFish} pounds of good Fish!`)
         let missSound = new Audio("../audio/miss.wav")
         missSound.play()}
-    } else if (!e.isVisible){
+    } else if(e.y + e.speed   > game.height 
+        && e.isVisible && e !== goldFish
+        ){
+        e.isVisible = false
+        }else if (!e.isVisible && e !== goldFish){
         e.y = -90
         if (e=== goodFish 
             || e === bombFish){
@@ -322,8 +345,15 @@ const missFish = (e) =>{
             e.x = spawnFish(goodFish2)
         }
         e.isVisible = true
+    
     }
 }
+
+//push golfish in array
+setTimeout(() =>{
+    fishes.push(goldFish)
+    goldFish.y - 90
+}, 30000)
 
 //spawn fish function
 const fishSpawn = (fish) =>{
@@ -344,15 +374,15 @@ if (gameOn){
     score.innerHTML =   `Caught lbs <br>of Fish <br> ${scoreFish}`
     lostFish.innerHTML = `Missed lbs<br>of Fish<br>${missedFish} /50`
 } 
-// else if (gamePause){
-//     for(let i = 0; i < fishes.length; i++){
-//        fishes[i].render()
-//        player.render()
-// }
-// }
+else if (gamePause){
+    for(let i = 0; i < fishes.length; i++){
+       fishes[i].render()
+       player.render()
+}
+}
 }
 
-//Events for key pressing and releasing
+//Events for keys A & D pressing and releasing
 document.addEventListener('keydown', (e) => {
     player.setDirection(e.key)
 })
@@ -362,21 +392,8 @@ document.addEventListener('keyup', (e) => {
     }
 })
 
+//Interval that runs gameloop
 const gameInterval = setInterval(gameLoop, 60)
-// const stopGameLoop = () => { clearInterval(gameInterval) }
-// if(!gameOn){
-    // const clearInterval = () =>{
-    //     setTimeout(ctx.clearRect(0, 0, game.width, game.height), 250)
-    // }
-    // const pauseInterval = setInterval(() =>{
-        // clearInterval()
-        // stopGameLoop()
-        // goodFish.render()
-        // bombFish.render()
-        // player.render()
-    // }, 1000)
-// } 
-
 
 //when you click on SPACE key
 document.addEventListener("keydown", (event )=> {
@@ -393,8 +410,7 @@ document.addEventListener("keydown", (event )=> {
     }
 })
 
-      
-    
+//loads the interval
 document.addEventListener('DOMContentLoaded', function () {
         gameInterval
     })
