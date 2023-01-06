@@ -60,6 +60,7 @@ main {
   #scoreBoardContainer{
     /* display: none; */
     position: absolute;
+    /* opacity: 0.6;  */
     background-image: url("../img/pixelwood.png");
     border-radius: 5px;
     border: 30px double rgb(77, 35, 15);

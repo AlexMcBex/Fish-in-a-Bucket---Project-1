@@ -30,6 +30,7 @@
 //game start
 let endGame = false
 let gameOn = false
+let gamePause = true
 // canvas
 const game = document.getElementById("river")
 const container = document.getElementById("container")
@@ -133,7 +134,6 @@ const player = {
 }
 
 //Fish Spawn
-// let fishX = 300
 let spawnFish = (fish) => {
     const  random = () =>{
         return Math.floor(Math.random() * 10)
@@ -149,6 +149,8 @@ let spawnFish = (fish) => {
     return fish.x
 }
 }
+
+//fish objects
 const goodFish = new Fish(90, 40, 290, 15, true, 5, "../img/pixelgoodfishvert.png")
 const goodFish2 = new Fish(90, 40, spawnFish(goodFish), 15, true, 5, "../img/pixelgoodfishvert.png")
 goodFish2.y -= 300
@@ -164,25 +166,61 @@ const fishes = [goodFish, goodFish2, fatFish ,bombFish]
 
 //function to switch game ON/OFF
 const gameSwitch = () =>{
+    
     //if paused 321 if not start
+    if (gamePause && !gameOn){
+        const pauseRender =()=>{
+            for(let i = 0; i < fishes.length; i++){
+                fishes[i].render()}
+                player.render()}
+        setInterval(pauseRender, 750)
+        setTimeout(() =>{scoreBoard.innerHTML = "3"
+        scoreBoardContainer.style.opacity = "0.9"}, 500)
+        setTimeout(() => {
+        scoreBoard.innerHTML = "2"
+        scoreBoardContainer.style.opacity = "0.6"
+        }, 1000)
+        setTimeout(() => {
+            scoreBoard.innerHTML = "1"
+            scoreBoardContainer.style.opacity = "0.3"
+            }, 1500)
+            setTimeout(() => {
+                scoreBoard.innerHTML = ""
+                scoreBoardContainer.style.display = "none"
+                scoreBoardContainer.style.opacity = "1"
+                clearInterval(pauseRender)
+                gameOn = true
+                gamePause = false
+                console.log(`The game is ON`)
+            }, 2000)
+    }
     // fish.render / player
     //TIMEOUT HERE
-    gameOn = !gameOn
-    if (gameOn){
-        console.log(`The game is ON`)
-    scoreBoardContainer.style.display = "none"
-    console.log(scoreBoardContainer.style.display)
-    }else {
-        console.log(`The game is OFF`)
-        scoreBoardContainer.style.display = "inline-block"
-        scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
+    // gameOn = !gameOn
+    // gamePause = !gamePause
+    if (gameOn 
+        && !gamePause
+        && !endGame){
+            gameOn = false
+            gamePause = true     
+            console.log(`The game is OFF`)
+            scoreBoardContainer.style.display = "inline-block"
+            scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
+    }
+    // else if (!gameOn 
+    //     && gamePause
+    //     && !endGame) {
+    //     console.log(`The game is OFF`)
+    //     scoreBoardContainer.style.display = "inline-block"
+    //     scoreBoard.innerHTML = `PAUSED GAME<br><img src="../img/pixelgoodfishhorizontal.png"><img src="img/pixelfatfishhorizontal.png"><img src="img/pixelgoldfishhorizontal.png"> = Good Fish, catch them to gain points <br> <img src="../img/pixelbombfish.png"> = Bad Fish, if you catch it the game is over! <hr>Click SPACE to Resume`
 
     }
-}
+// }
 
 //game (re)start
 const gameStart = () =>{
     endGame = false
+    gamePause = false
     scoreFish = 0
     missedFish = 0
     goodFish.y = -90
