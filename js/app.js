@@ -124,7 +124,7 @@ const player = {
     render: function () {
         
         const playerimg = new Image
-        playerimg.src = '../img/pixelbucket.png'
+        playerimg.src = 'https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/img/pixelbucket.png'
         ctx.drawImage(playerimg, this.x, this.y)
 
         // ctx.fillStyle = this.color
@@ -182,13 +182,13 @@ if (left && fish.x - randomX() > 0
 }
 
 //fish objects
-const goodFish = new Fish(90, 40, 290, true, 5, '../img/pixelgoodfishvert.png')
-const goodFish2 = new Fish(90, 40, spawnFish(goodFish), true, 5, '../img/pixelgoodfishvert.png')
+const goodFish = new Fish(90, 40, 290, true, 5, 'https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/img/pixelgoodfishvert.png')
+const goodFish2 = new Fish(90, 40, spawnFish(goodFish), true, 5, 'https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/img/pixelgoodfishvert.png')
 goodFish2.y -= 300
-const fatFish = new Fish(100, 75,  spawnFish(goodFish2), true, 10, '../img/pixelfatfish.png')
+const fatFish = new Fish(100, 75,  spawnFish(goodFish2), true, 10, 'https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/img/pixelfatfish.png')
 fatFish.y = -600
-const goldFish = new Fish (50, 30, 290, true, 100, '../img/pixelgoldfish.png')
-const bombFish = new Fish(60, 60, 200,  false, 0, '../img/pixelbombfish.png')
+const goldFish = new Fish (50, 30, 290, true, 100, 'https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/img/pixelgoldfish.png')
+const bombFish = new Fish(60, 60, 200,  false, 0, 'https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/img/pixelbombfish.png')
 
 //fish array
 const fishes = [goodFish, goodFish2, fatFish ,bombFish]
@@ -317,7 +317,7 @@ const detectCatch = (fish) => {
             scoreFish += fish.points
             fish.isVisible = false
             speedUp(fish)
-            let catchSound = new Audio('../audio/catch.wav')
+            let catchSound = new Audio('https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/audio/catch.wav')
             catchSound.play()
             //goldfish catch detection
         }else if (fish.safe && fish === goldFish){
@@ -330,13 +330,13 @@ const detectCatch = (fish) => {
                 fishes.push(goldFish)
             }, 30000)
             speedUp(fish)
-            let goldSound = new Audio('../audio/goldcatch.wav')
+            let goldSound = new Audio('https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/audio/goldcatch.wav')
             goldSound.play()
         }else{
             // fish.isVisible = false
             // console.log("BOOM")
             fish.isVisible = false
-            let boomSound = new Audio('../audio/explosion.wav')
+            let boomSound = new Audio('https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/audio/explosion.wav')
             boomSound.play()
             gameOver("bomb")
         }
@@ -355,7 +355,7 @@ const missFish = (e) =>{
         }
         if(e.safe){
         console.log(`you missed ${missedFish} pounds of good Fish!`)
-        let missSound = new Audio('../audio/miss.wav')
+        let missSound = new Audio('https://github.com/AlexMcBex/Fish-in-a-Bucket---Project-1/blob/main/audio/miss.wav')
         missSound.play()}
     } else if(e.y + e.speed   > game.height 
         && e.isVisible && e !== goldFish
